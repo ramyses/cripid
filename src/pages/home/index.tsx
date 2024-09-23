@@ -24,8 +24,8 @@ export function Home(){
   const [coins, setCoins] = useState<CoinProps[]>([])
   useEffect(() => {
     function getData(){
-      //depois posso cria o backend pra consumir a api direto do coinlib
-      fetch('https://coinlib.io/api/v1/coinlist?key=37078a77fbe8e2b7&pref=EURhttps://coinlib.io/api/v1/coinlist?key=37078a77fbe8e2b7&pref=BRL')
+      //coinlib não ta permitindo consumir a api direto do front
+      fetch('https://coinlib.io/api/v1/coinlist?key=&pref=BRL')
       .then(response => response.json())
       .then((data: DataProps) => {
         //a requisicao deu certo
