@@ -1,6 +1,6 @@
-import {useEffect, useState } from 'react'
+import {FormEvent, useEffect, useState } from 'react'
 
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import styles from './home.module.css'
 import { BiSearch } from 'react-icons/bi'
 import key from '../../key/coinlibKey';
@@ -15,6 +15,7 @@ interface CoinProps {
   volume_24h: string;
   market_Cap: string;
   formatedPrice: string;
+  formatedMarket: string;
 }
 
 interface DataProps{
@@ -23,6 +24,9 @@ interface DataProps{
 
 export function Home(){
   const [coins, setCoins] = useState<CoinProps[]>([])
+  const [inputValue, setInputValue] = useState("")
+  const navigate = useNavigate();
+
   useEffect(() => {
     function getData(){
       //coinlib não ta permitindo consumir a api direto do front
@@ -54,11 +58,18 @@ export function Home(){
   
     getData();
   })
-  
+
+  function handleSearch(e: FormEvent){
+    e.preventDefault();
+    if( inputValue === "") return;
+    
+    navigate(`/detail/${inputValue}`)
+  }
+
   return(
     <main className={styles.container}>
-      <form action="" className={styles.form}>
-        <input type="text" placeholder='Digite o simbolo  da moeda: BTC..' />
+      <form action="" className={styles.form} onSubmit={handleSearch}>
+        <input value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder='Digite o simbolo  da moeda: BTC..' />
         <button type='submit'>
           <BiSearch size={30} color="#fff"/>
         </button>
@@ -74,22 +85,24 @@ export function Home(){
           </tr>
         </thead>
         <tbody id='tbody'>
-          <tr className={styles.tr}>
-            <td className={styles.tdLabel} data-label="Moeda">
-              <Link className={styles.link} to='/detail/btc'>
-                <span >Bitcoin</span> | BTC
-              </Link>
-            </td>
-            <td className={styles.tdLabel} data-label="Mercado"> 
-              R$ 9999,99
-            </td>
-            <td className={styles.tdLabel} data-label="Preço"> 
-              R$ 999,99
-            </td>
-            <td className={styles.tdProfit} data-label="Volume"> 
-              <span>-5.3</span>
-            </td>
-          </tr>
+          {coins.map( coin => (
+            <tr key={coin.name} className={styles.tr}>
+              <td className={styles.tdLabel} data-label="Moeda">
+                <Link className={styles.link} to={`/detail/${coin.symbol}`}>
+                  <span >{coin.name}</span> | {coin.symbol}
+                </Link>
+              </td>
+              <td className={styles.tdLabel} data-label="Mercado"> 
+                {coin.formatedMarket}
+              </td>
+              <td className={styles.tdLabel} data-label="Preço"> 
+                {coin.formatedPrice}
+              </td>
+              <td className={Number(coin?.delta_24h) >= 0 ? styles.tdProft : styles.tdLoss}  data-label="Volume"> 
+                <span>{coin.delta_24h}</span>
+              </td>
+            </tr>
+          ) )}
         </tbody>
       </table>
     </main>

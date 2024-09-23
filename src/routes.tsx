@@ -14,11 +14,11 @@ const router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: "/",
+        path: "/detail/:cripto",
         element: <Detail />
       },
       {
-        path: "/",
+        path: "*",
         element: <Notfound />
       }
     ]
