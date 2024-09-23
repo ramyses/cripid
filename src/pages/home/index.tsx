@@ -3,6 +3,7 @@ import {useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styles from './home.module.css'
 import { BiSearch } from 'react-icons/bi'
+import key from '../../key/coinlibKey';
 
 //https://coinlib.io/api/v1/coinlist?key=37078a77fbe8e2b7&pref=EUR
 
@@ -25,7 +26,7 @@ export function Home(){
   useEffect(() => {
     function getData(){
       //coinlib não ta permitindo consumir a api direto do front
-      fetch('https://coinlib.io/api/v1/coinlist?key=&pref=BRL')
+      fetch(`https://coinlib.io/api/v1/coinlist?key=${key}&pref=BRL`)
       .then(response => response.json())
       .then((data: DataProps) => {
         //a requisicao deu certo
