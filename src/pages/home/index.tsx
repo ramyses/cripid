@@ -1,8 +1,59 @@
+import {useEffect, useState } from 'react'
+
 import { Link } from 'react-router-dom'
 import styles from './home.module.css'
 import { BiSearch } from 'react-icons/bi'
 
+//https://coinlib.io/api/v1/coinlist?key=37078a77fbe8e2b7&pref=EUR
+
+interface CoinProps {
+  name: string;
+  delta_24h: string;
+  price: string;
+  symbol: string;
+  volume_24h: string;
+  market_Cap: string;
+  formatedPrice: string;
+}
+
+interface DataProps{
+  coins: CoinProps[];
+}
+
 export function Home(){
+  const [coins, setCoins] = useState<CoinProps[]>([])
+  useEffect(() => {
+    function getData(){
+      //depois posso cria o backend pra consumir a api direto do coinlib
+      fetch('https://coinlib.io/api/v1/coinlist?key=37078a77fbe8e2b7&pref=EURhttps://coinlib.io/api/v1/coinlist?key=37078a77fbe8e2b7&pref=BRL')
+      .then(response => response.json())
+      .then((data: DataProps) => {
+        //a requisicao deu certo
+        const coinsData = data.coins.slice(0, 15) // limitando as moedas a 15
+
+        const price = Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL"
+        })
+
+        const formatResult = coinsData.map((item) => {
+          const formated = {
+            ...item,
+            formatedPrice: price.format(Number(item.price)),
+            formatedMarket: price.format(Number(item.market_Cap))
+          }
+          return formated
+        })
+        setCoins(formatResult)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    }
+  
+    getData();
+  })
+  
   return(
     <main className={styles.container}>
       <form action="" className={styles.form}>
